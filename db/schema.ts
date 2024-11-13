@@ -1,9 +1,10 @@
 import { sql } from "drizzle-orm";
-import { integer, text, pgTable, timestamp } from "drizzle-orm/pg-core";
+import { integer, text, pgTable, timestamp, date } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
   id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
   name: text("name").notNull(),
+  date: date("date", { mode: "string" }),
   datetime: timestamp("datetime", { precision: 3 }).notNull(),
   datetimeString: timestamp("datetime_string", {
     precision: 3,

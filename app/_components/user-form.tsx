@@ -42,7 +42,8 @@ export function UserForm() {
     });
     await createUser({
       datetime: data.datetime,
-      datetimeString: format(data.datetime, "yyyy-MM-dd"),
+      datetimeString: data.datetime.toUTCString(),
+      datetimeStringWithTimeZone: data.datetime.toISOString(),
     });
   }, console.error);
   return (

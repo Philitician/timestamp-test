@@ -2,7 +2,7 @@ import { db } from "@/db";
 import { users } from "@/db/schema";
 import { formatToNorwegian } from "@/lib/utils";
 import { UserForm } from "./_components/user-form";
-import { between, eq, gte } from "drizzle-orm";
+import { between, desc, eq, gte, sql } from "drizzle-orm";
 import { SearchParams } from "nuqs/server";
 import { searchParamsCache } from "./search-params";
 import { addDays, format, subDays } from "date-fns";
@@ -35,16 +35,20 @@ export default async function Home(props: HomeProps) {
       datetime: users.datetime,
       datetimeString: users.datetimeString,
       datetimeWithTimeZone: users.datetimeWithTimeZone,
-      datetimeStringWithTimeZone: users.datetimeStringWithTimeZone,
+      datetimeStringWithTimeZone: sql`to_char(${users.datetimeWithTimeZone}, 'yyyy-MM-dd')`,
+      // return datetimeStringWithTimeZone as date but in norwegian timezone
+      norwegian_time: sql`to_char(${users.datetimeWithTimeZone} AT TIME ZONE 'Europe/Oslo', 'YYYY-MM-DD HH24:MI:SS')`,
     })
     .from(users)
-    .where(
-      between(
-        users.datetime,
-        datetimeStartDate ?? last10Days,
-        datetimeEndDate ?? new Date()
-      )
-    )
+    // .where(
+    //   between(
+    //     users.datetime,
+    //     datetimeStartDate ?? last10Days,
+    //     datetimeEndDate ?? new Date()
+    //   )
+    // )
+    .orderBy(desc(users.createdAt))
+    .limit(1)
     .then((users) =>
       users.map((user) => ({
         ...user,

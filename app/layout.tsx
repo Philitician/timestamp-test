@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import localFont from "next/font/local";
 import "./globals.css";
+import DateFilter from "@/components/date-filter";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -28,8 +30,17 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <NuqsAdapter>
+          <div className="flex flex-col gap-4 p-2">
+            <Header />
+            {children}
+          </div>
+        </NuqsAdapter>
       </body>
     </html>
   );
+}
+
+function Header() {
+  return <DateFilter id="datetime" label="DateTime Range" />;
 }
